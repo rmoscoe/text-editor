@@ -24,14 +24,14 @@ module.exports = () => {
       }),
       new InjectManifest({
         swSrc: "./src-sw.js",
-        swDest: "service-worker.js"
+        swDest: "./dist/service-worker.js"
       }),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
         short_name: "JATE",
         description: "A progressive web app for text editing",
         background_color: "#ffffff",
-        crossorigin: "anonymous",
+        crossorigin: "use-credentials",
         icons: [
           {
             src: path.resolve("src/images/logo.png"),
@@ -46,6 +46,10 @@ module.exports = () => {
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
         },
         {
           test: /\.m?js$/,
