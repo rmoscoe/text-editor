@@ -22,7 +22,10 @@ module.exports = () => {
         template: './index.html',
         title: 'Just Another Text Editor'
       }),
-      new GenerateSW(),
+      new InjectManifest({
+        swSrc: "./src-sw.js",
+        swDest: "service-worker.js"
+      }),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
         short_name: "JATE",
