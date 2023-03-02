@@ -24,7 +24,7 @@ module.exports = () => {
       }),
       new InjectManifest({
         swSrc: "./src-sw.js",
-        swDest: "./dist/service-worker.js"
+        swDest: "src-sw.js"
       }),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
@@ -32,6 +32,8 @@ module.exports = () => {
         description: "A progressive web app for text editing",
         background_color: "#ffffff",
         crossorigin: "use-credentials",
+        publicPath: "./",
+        start_url: "./",
         icons: [
           {
             src: path.resolve("src/images/logo.png"),

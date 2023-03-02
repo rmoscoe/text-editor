@@ -1,0 +1,16 @@
+{
+  "icons": [
+    {
+      "src": "./icon_512x512.3ca11a97eb7d90b61fc3db0f3c5dcdb6.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "Just Another Text Editor",
+  "short_name": "JATE",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": ".",
+  "description": "A progressive web app for text editing",
+  "background_color": "#ffffff"
+}
