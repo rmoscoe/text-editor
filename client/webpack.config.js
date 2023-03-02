@@ -33,12 +33,13 @@ module.exports = () => {
         description: "A progressive web app for text editing",
         background_color: "#ffffff",
         crossorigin: "use-credentials",
-        publicPath: "./",
-        start_url: "./",
+        publicPath: "/",
+        start_url: "/",
         icons: [
           {
             src: path.resolve("src/images/logo.png"),
-            sizes: [512]
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join("assets", "icons")
           }
         ]
       })
