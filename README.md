@@ -7,123 +7,220 @@
 | JavaScript    | [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | 
 | Node.js     | [https://nodejs.org/en/](https://nodejs.org/en/)      |   
 | Webpack | [https://webpack.js.org/](https://webpack.js.org/)     |    
+| IndexedDB | [https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) |
 | Concurrently | [https://www.npmjs.com/package/concurrently](https://www.npmjs.com/package/concurrently) |
+| Heroku | [https://www.heroku.com/home](https://www.heroku.com/home) |
+
+<br />
+
+## Table of Contents
+- [Technology Used](#technology-used)
+- [Table of Contents](#table-of-contents)
+- [Description](#description)
+- [Code Refactor Example](#code-refactor-example)
+  - [Webpack Configuration](#webpack-configuration)
+  - [Database Functions](#database-functions)
+  - [Installation Functions](#installation-functions)
+- [Installation and Usage](#installation-and-usage)
+- [Learning Points](#learning-points)
+- [Author Info](#author-info)
+  - [Ryan Moscoe](#ryan-moscoe)
+- [Credits](#credits)
+- [License](#license)
+
+<br />
 
 ## Description 
 
-[Visit the Deployed Site](https://youtu.be/BFyeuLhjcPY)
+[Visit the Deployed Site](https://vast-wave-58973.herokuapp.com/)
 
-Your GitHub profile is an extremely important aspect of your public identity as a developer. A well-crafted one allows you to show off your work to other developers as well as potential employers. An important component of your GitHub profile—and one that many new developers often overlook—is the README.md file.
+This progressive web app (PWA) loads a basic text editor in a browser. The editor automatically saves text entered by the user in a client-side database using IndexedDB and retrieves the user's saved text on load. In addition, the user can install the editor as an app for offline use.
 
-The quality of a README often differentiates a good project from a bad project. A good one takes advantage of the opportunity to explain and showcase what your application does, justify the technologies used, and even talk about some of the challenges you faced and features you hope to implement in the future. A good README helps you stand out among the large crowd of developers putting their work on GitHub.
+<br />
 
-There's no one right way to structure a good README. There is one very wrong way, however, and that is to not include a README at all or to create a very anemic one. This guide outlines a few best practices. As you progress in your career, you will develop your own ideas about what makes a good README.
+![Site Langing Page](./assets/images/JATE.png)
 
-At a minimum, your project README needs a title and a short description explaining the what, why, and how. What was your motivation? Why did you build this project? (Note: The answer is not "Because it was a homework assignment.") What problem does it solve? What did you learn? What makes your project stand out? 
-
-Lastly, if your project is deployed, include a link to the deployed application here.
-
-If you're new to Markdown, read the GitHub guide on [Mastering Markdown](https://guides.github.com/features/mastering-markdown/).
-
-If you need an example of a good README, check out [the VSCode repository](https://github.com/microsoft/vscode).
-
-
-![Site Langing Page](./site.gif)
+<br />
 
 ## Code Refactor Example
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+Starter code was provided for this project, including an HTML document, CSS stylesheet, and server-side code. Three components  of the client-side JavaScript code required completion:
+* The webpack configuration file (webpack.config.js)
+* The database functions for saving and retrieving data (database.js)
+* The installation script (install.js)
+ 
+ <br />
 
+### Webpack Configuration
+The webpack.config.js file initially included the following code:
 
-```html
-<div class="header">
-        <h1>Hori<span class="seo">seo</span>n</h1>
-        <div>
-            <ul>
-                <li>
-                    <a href="#search-engine-optimization">Search Engine Optimization</a>
-                </li>
-                <li>
-                    <a href="#online-reputation-management">Online Reputation Management</a>
-                </li>
-                <li>
-                    <a href="#social-media-marketing">Social Media Marketing</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+```javascript
+module.exports = () => {
+  return {
+    mode: 'development',
+    entry: {
+      main: './src/js/index.js',
+      install: './src/js/install.js'
+    },
+    output: {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist'),
+    },
+    plugins: [
+      
+    ],
+
+    module: {
+      rules: [
+        
+      ],
+    },
+  };
+};
 ```
 
-Converting the above non-semantic div with the class of 'header' to an appropriate [<header> semantic element](https://www.w3schools.com/html/html5_semantic_elements.asp). 
+After configuring webpack plugins for a service worker and a manifest file, as well as adding css and babel loaders, the final code looked like this: 
 
-```html
-<header>
-        <h1>Hori<span class="seo">seo</span>n</h1>
-        <nav>
-            <ul>
-                <li>
-                    <a href="#search-engine-optimization">Search Engine Optimization</a>
-                </li>
-                <li>
-                    <a href="#online-reputation-management">Online Reputation Management</a>
-                </li>
-                <li>
-                    <a href="#social-media-marketing">Social Media Marketing</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
+```javascript
+module.exports = () => {
+  return {
+    mode: 'production',
+    entry: {
+      main: './src/js/index.js',
+      install: './src/js/install.js'
+    },
+    output: {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: "./"
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'Just Another Text Editor'
+      }),
+      new InjectManifest({
+        swSrc: "./src-sw.js",
+        swDest: "src-sw.js"
+      }),
+      new WebpackPwaManifest({
+        inject: true,
+        fingerprints: false,
+        name: "Just Another Text Editor",
+        short_name: "JATE",
+        description: "A progressive web app for text editing",
+        background_color: "#ffffff",
+        crossorigin: "use-credentials",
+        publicPath: "/",
+        start_url: "/",
+        icons: [
+          {
+            src: path.resolve("src/images/logo.png"),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join("assets", "icons")
+          }
+        ]
+      })
+    ],
 
+    module: {
+      rules: [
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/resource',
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
+            },
+          },
+        }
+      ],
+    },
+  };
+};
 ```
 
-This change require some additional modification to the CSS selector: 
+<br />
 
-```css
-.header {
-    padding: 20px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    background-color: #2a607c;
-    color: #ffffff;
+### Database Functions
+
+Similarly, the database functions were not built out in the starter code:
+
+```javascript
+export const putDb = async (content) => console.error('putDb not implemented');
+
+export const getDb = async () => console.error('getDb not implemented');
+```
+
+The putDB function ultimately took the following form:
+
+```javascript
+export const putDb = async (content) => {
+  const jateDb = await openDB("content", 1);
+  const tx = jateDb.transaction("content", "readwrite");
+  const store = tx.objectStore("content");
+  const request = store.put({content});
+  const result = await request;
+  return result;
 }
 ```
 
-No longer targeting the element on the page with the class of 'header' but instead the css selector targeting the 'header' element 
+<br />
 
-```css
-header {
-    padding: 20px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    background-color: #2a607c;
-    color: #ffffff;
-}
+### Installation Functions
 
+Finally, the installation functions were initially empty:
+
+```javascript
+window.addEventListener('beforeinstallprompt', (event) => {});
+
+butInstall.addEventListener('click', async () => {});
+
+window.addEventListener('appinstalled', (event) => {});
 ```
 
-## Usage 
+Here is the fully built click event handler:
 
-Provide instructions and examples for use. Include screenshots as needed. 
-
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
-
-```md
-![alt text](assets/images/screenshot.png)
+```javascript
+butInstall.addEventListener('click', async () => {
+    const promptEvent = window.deferredPrompt;
+    if (!promptEvent) {
+        return;
+    }
+    promptEvent.prompt();
+    await promptEvent.userChoice;
+    window.deferredPrompt = null;
+    butInstall.textContent = "Installed";
+});
 ```
+
+<br />
+
+## Installation and Usage 
+
+To install this application, click the ```Install``` button at the top of the screen or the ![Install icon](./assets/images/Install.png) icon in the address bar of the browser. To use the application, enter text or code. The editor automatically saves your entry to the database and retrieves it the next time you launch the page or open the application.
+
+<br />
 
 
 ## Learning Points 
 
+* Progressive Web Apps (PWAs)
+* Webpack
+* IndexedDB
+* Concurrently
 
-This is a good place to Explain what you Learned by creating this application.
-This is a great way to remind about all of the Complex Skills you now have.
-If the user is less experienced than you:
-They will be impressed by what you can do!
-
-If the user is more experienced than you:
-They will be impressed by what you can do!
-
-Remember, it is easy to forget exactly how Valuable and Impressive your skills are, as well as How Much You’ve Learned!
-So quantify that here!
-
+<br />
 
 ## Author Info
 
@@ -133,55 +230,14 @@ So quantify that here!
 * [LinkedIn](https://www.linkedin.com/in/ryan-moscoe-8652973/)
 * [Github](https://github.com/rmoscoe)
 
-The user has looked through your whole README, and gotten familiar with your application. 
-This is where you take credit, and make it easy for them to learn more about you!
-Direct them to the following:
-- Your GitHub Profile
-- Your LinkedIn
-- Your Portfolio Website
-- And Anything Else You Want!
-
-Give credit where credit is due! 
-
-If you Pseudocode or Pair Program with someone else, give them kudos in your Contributors section!
-
+<br />
 
 ## Credits
 
-List your collaborators, if any, with links to their GitHub profiles.
+Starter code provided by Trilogy Education Services, LLC, a 2U, Inc. brand, on behalf of the University of California, Berkeley Coding Boot Camp.
 
-If you used any third-party assets that require attribution, list the creators with links to their primary web presence in this section.
-
-If you followed tutorials, include links to those here as well.
-
+<br />
 
 ## License
 
-The last section of a good README is a license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, use [https://choosealicense.com/](https://choosealicense.com/)
-
-
----
-
-🏆 The sections listed above are the minimum for a good README, but your project will ultimately determine the content of this document. You might also want to consider adding the following sections.
-
-## Badges
-
-![badmath](https://img.shields.io/github/languages/top/nielsenjared/badmath)
-
-Badges aren't _necessary_, per se, but they demonstrate street cred. Badges let other developers know that you know what you're doing. Check out the badges hosted by [shields.io](https://shields.io/). You may not understand what they all represent now, but you will in time.
-
-## Features
-
-If your project has a lot of features, consider adding a heading called "Features" and listing them there.
-
-## Contributing
-
-If you created an application or package and would like other developers to contribute it, you will want to add guidelines for how to do so. The [Contributor Covenant](https://www.contributor-covenant.org/) is an industry standard, but you can always write your own.
-
-## Tests
-
-Go the extra mile and write tests for your application. Then provide examples on how to run them.
-
----
-
-© 2022 Trilogy Education Services, LLC, a 2U, Inc. brand. Confidential and Proprietary. All Rights Reserved.
+See repository for license information.
